@@ -1,0 +1,102 @@
+{
+  "name": "Find software with Curated Finds Direct",
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "When clicking Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "search",
+      "name": "Curated Finds",
+      "type": "n8n-nodes-curated-finds.curatedFinds",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "software",
+        "operation": "search",
+        "query": "SpeechBrain",
+        "pageSize": 3,
+        "category": "",
+        "platform": "",
+        "offset": 0,
+        "output": "raw",
+        "fields": [
+          "name",
+          "purpose",
+          "type",
+          "requirements"
+        ]
+      },
+      "executeOnce": true,
+      "retryOnFail": false
+    },
+    {
+      "id": "result",
+      "name": "Review page and remaining allowance",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "setup",
+      "name": "Setup and paid lookup notice",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ],
+      "parameters": {
+        "content": "## Curated Finds \u2014 one explicit search\nInstall n8n-nodes-curated-finds, create a Curated Finds API credential with your own direct subscription key from https://www.myworkingmemory.ai/apis, and select it on Search.\n\nSaving or testing the credential may use one lookup per test. Clicking Execute uses one additional lookup. Direct access is $5.99/month for 1,000 lookups, separate from n8n and marketplace subscriptions. The output preserves version, total, records, nextOffset and remaining. No automatic pagination or node-level retries. Source-reviewed records are not proof the listed tools were installed or run.",
+        "height": 260,
+        "width": 700
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Curated Finds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Curated Finds": {
+      "main": [
+        [
+          {
+            "node": "Review page and remaining allowance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

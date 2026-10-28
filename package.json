@@ -1,0 +1,72 @@
+{
+  "name": "n8n-nodes-curated-finds",
+  "version": "0.1.0",
+  "description": "Search the Myworkingmemory Curated Finds software catalogue with your direct subscription API key.",
+  "license": "MIT",
+  "homepage": "https://www.myworkingmemory.ai/curated-finds-docs.html",
+  "keywords": [
+    "n8n-community-node-package",
+    "curated-finds",
+    "myworkingmemory",
+    "software-search",
+    "ai-tools"
+  ],
+  "author": {
+    "name": "Myworkingmemory LLC",
+    "email": "support@myworkingmemory.ai",
+    "url": "https://www.myworkingmemory.ai"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myworkingmemory/n8n-nodes-curated-finds.git"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "check": "npm run lint && npm test",
+    "scan:local": "node scripts/scan-local.mjs"
+  },
+  "files": [
+    "dist/nodes",
+    "dist/credentials",
+    "examples",
+    "LICENSE",
+    "VALIDATION.md"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/CuratedFindsApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/CuratedFinds/CuratedFinds.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.55.1",
+    "eslint": "9.32.0",
+    "prettier": "3.6.2",
+    "release-it": "^21.1.0",
+    "typescript": "5.9.2",
+    "n8n-core": "2.45.4",
+    "n8n-workflow": "2.45.2",
+    "@n8n/scan-community-package": "0.41.1"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/myworkingmemory/n8n-nodes-curated-finds/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

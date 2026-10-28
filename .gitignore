@@ -1,0 +1,7 @@
+dist
+node_modules
+
+.validation
+.dev-n8n
+*.tgz
+.DS_Store

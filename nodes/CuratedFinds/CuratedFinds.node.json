@@ -1,0 +1,20 @@
+{
+  "node": "n8n-nodes-curated-finds.curatedFinds",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "Development"
+  ],
+  "resources": {
+    "credentialDocumentation": [
+      {
+        "url": "https://www.myworkingmemory.ai/curated-finds-docs.html#api"
+      }
+    ],
+    "primaryDocumentation": [
+      {
+        "url": "https://www.myworkingmemory.ai/curated-finds-docs.html"
+      }
+    ]
+  }
+}
