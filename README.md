@@ -75,4 +75,4 @@ npm run dev
 
 The MIT-licensed source is available at [myworkingmemory/n8n-nodes-curated-finds](https://github.com/myworkingmemory/n8n-nodes-curated-finds), and the package is published on [npm](https://www.npmjs.com/package/n8n-nodes-curated-finds). Releases use the tag-triggered `.github/workflows/publish.yml` GitHub Action with npm provenance. Maintainers must ensure authorized npm publication access is configured before pushing a release tag. n8n Cloud verification remains separate from npm publication.
 
-Product documentation: [Curated Finds API](https://www.myworkingmemory.ai/curated-finds-docs.html). Support: [Myworkingmemory support](https://www.myworkingmemory.ai/software-library-support.html). License: [MIT](LICENSE).
+Product documentation: [Curated Finds API](https://www.myworkingmemory.ai/curated-finds-docs.html). Support: [dean@myworkingmemory.ai](mailto:dean@myworkingmemory.ai) or the [Myworkingmemory support page](https://www.myworkingmemory.ai/software-library-support.html). License: [MIT](LICENSE).

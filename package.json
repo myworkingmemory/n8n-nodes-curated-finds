@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-curated-finds",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Search the Myworkingmemory Curated Finds software catalogue with your direct subscription API key.",
   "license": "MIT",
   "homepage": "https://www.myworkingmemory.ai/curated-finds-docs.html",
@@ -13,7 +13,7 @@
   ],
   "author": {
     "name": "Myworkingmemory LLC",
-    "email": "support@myworkingmemory.ai",
+    "email": "dean@myworkingmemory.ai",
     "url": "https://www.myworkingmemory.ai"
   },
   "repository": {

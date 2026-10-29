@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Correct the package author email to dean@myworkingmemory.ai and add the working support address to the README.
+- Record the published 0.1.1 scanner pass and provenance; node behaviour is unchanged.
+
 ## 0.1.1
 
 - Correct installation and publication documentation after the initial npm release.
