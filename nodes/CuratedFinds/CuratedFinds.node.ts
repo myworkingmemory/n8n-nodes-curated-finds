@@ -14,7 +14,10 @@ export class CuratedFinds implements INodeType {
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
-		credentials: [{ name: 'curatedFindsApi', required: true }],
+		credentials: [
+			{ name: 'curatedFindsApi', required: true, displayOptions: { show: { authentication: ['direct'] } } },
+			{ name: 'curatedFindsRapidApi', required: true, displayOptions: { show: { authentication: ['rapidapi'] } } },
+		],
 		requestDefaults: {
 			baseURL: 'https://www.myworkingmemory.ai/api/software-library/direct',
 			headers: { Accept: 'application/json' },
@@ -24,6 +27,18 @@ export class CuratedFinds implements INodeType {
 			maxResponseBodyBytes: 1048576,
 		},
 		properties: [
+			{
+				displayName: 'Connection',
+				name: 'authentication',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{ name: 'Direct', value: 'direct', description: 'Use your Myworkingmemory direct subscription key', routing: { request: { baseURL: 'https://www.myworkingmemory.ai/api/software-library/direct' } } },
+					{ name: 'RapidAPI', value: 'rapidapi', description: 'Use your existing Software Library Search subscription on RapidAPI', routing: { request: { baseURL: 'https://software-library-search.p.rapidapi.com' } } },
+				],
+				default: 'direct',
+				description: 'Where your subscription is held. Direct remains the default to preserve existing workflows.',
+			},
 			{
 				displayName: 'Resource',
 				name: 'resource',
@@ -54,7 +69,7 @@ export class CuratedFinds implements INodeType {
 				default: 'search',
 			},
 			{
-				displayName: 'Each input item uses one subscription lookup, including an empty result. A timeout may already have used a lookup. There is no automatic pagination or node-level retry. Keep Retry On Fail off.',
+				displayName: 'Each input item sends one search request to your selected service, including an empty result. Your selected plan determines allowance and charges. A timeout may already have used a request. There is no automatic pagination or node-level retry. Keep Retry On Fail off.',
 				name: 'usageNotice',
 				type: 'notice',
 				default: '',
@@ -113,7 +128,7 @@ export class CuratedFinds implements INodeType {
 					{ name: 'Selected Fields', value: 'selected', description: 'Choose record fields; ID, source URL, review date and evidence limits are always included' },
 				],
 				default: 'raw',
-				description: 'Record fields to return. All modes retain the page version, total, next offset and remaining allowance.',
+				description: 'Record fields to return. All modes retain the page version, total and next offset. Remaining allowance is returned only by Direct.',
 			},
 			{
 				displayName: 'Fields',

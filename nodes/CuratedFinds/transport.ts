@@ -15,6 +15,15 @@ export async function validateSearchRequest(
 	this: IExecuteSingleFunctions,
 	requestOptions: IHttpRequestOptions,
 ): Promise<IHttpRequestOptions> {
+	const connection = this.getNodeParameter('authentication', 'direct');
+	if (connection !== 'direct' && connection !== 'rapidapi') {
+		throw new NodeOperationError(this.getNode(), 'Select Direct or RapidAPI for the connection');
+	}
+	// Select one fixed service destination; never accept a user-supplied host.
+	requestOptions.baseURL = connection === 'rapidapi'
+		? 'https://software-library-search.p.rapidapi.com'
+		: 'https://www.myworkingmemory.ai/api/software-library/direct';
+	requestOptions.url = '/search';
 	const qs = requestOptions.qs ?? {};
 	for (const [name, maximum] of [['query', 200], ['category', 100], ['platform', 100]] as const) {
 		if (typeof qs[name] !== 'string' || (qs[name] as string).length > maximum) {
@@ -48,12 +57,19 @@ export async function validateSearchResponse(
 ): Promise<INodeExecutionData[]> {
 	const result = items.length === 1 ? items[0].json : undefined;
 	const limit = this.getNodeParameter('pageSize') as number;
+	const rapidapi = this.getNodeParameter('authentication', 'direct') === 'rapidapi';
 	if (!result || typeof result.version !== 'string' || !result.version ||
 		!Array.isArray(result.records) || result.records.length > limit ||
 		!Number.isSafeInteger(result.total) || (result.total as number) < result.records.length ||
-		!Number.isSafeInteger(result.remaining) || (result.remaining as number) < 0 ||
-		!(result.nextOffset === null || (Number.isSafeInteger(result.nextOffset) && (result.nextOffset as number) > 0))) {
+		(!rapidapi && (!Number.isSafeInteger(result.remaining) || (result.remaining as number) < 0 ||
+		!(result.nextOffset === null || (Number.isSafeInteger(result.nextOffset) && (result.nextOffset as number) > 0))))) {
 		throw new NodeOperationError(this.getNode(), 'Curated Finds returned an unexpected response. The lookup may have been used; inspect your account before retrying.');
+	}
+	if (rapidapi) {
+		const next = Number(this.getNodeParameter('offset')) + (result.records as IDataObject[]).length;
+		// RapidAPI returns no quota or cursor in the JSON body. Derive only the
+		// next position from this page; do not invent a remaining-plan allowance.
+		result.nextOffset = (result.records as IDataObject[]).length > 0 && next < (result.total as number) ? next : null;
 	}
 	const output = this.getNodeParameter('output');
 	if (output === 'raw') return items;

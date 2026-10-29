@@ -5,7 +5,9 @@ import { readFileSync } from 'node:fs';
 const require = createRequire(import.meta.url);
 const { CuratedFinds } = require('../dist/nodes/CuratedFinds/CuratedFinds.node.js');
 const { CuratedFindsApi } = require('../dist/credentials/CuratedFindsApi.credentials.js');
-const { Workflow } = require('n8n-workflow');
+const { CuratedFindsRapidApi } = require('../dist/credentials/CuratedFindsRapidApi.credentials.js');
+const rapidCredential = new CuratedFindsRapidApi();
+const { Workflow, NodeHelpers } = require('n8n-workflow');
 const { RoutingNode } = require('../node_modules/n8n-core/dist/execution-engine/routing-node.js');
 const nodeType = new CuratedFinds();
 const credential = new CuratedFindsApi();
@@ -15,7 +17,8 @@ const page = () => ({ version: 'fixture-v1', total: 233, records: [{ id: 'github
 function setup(parameters = {}, response = page(), failure) {
   const node = { id: 'fixture-node', name: 'Curated Finds', type: 'n8n-nodes-curated-finds.curatedFinds', typeVersion: 1, position: [0, 0], parameters: { ...defaults, ...parameters } };
   const workflow = new Workflow({ id: 'fixture-workflow', nodes: [node], connections: {}, active: false, nodeTypes: { getByNameAndVersion: () => nodeType, getKnownTypes: () => ({}) } });
-  const context = { node, nodeType, workflow, mode: 'manual', connectionInputData: [{ json: {} }], runExecutionData: null };
+  const credentialReads = [];
+  const context = { node, nodeType, workflow, mode: 'manual', connectionInputData: [{ json: {} }], runExecutionData: null, getNodeParameter: name => node.parameters[name], getCredentials: async name => { credentialReads.push(name); return { apiKey: 'fixture-only' }; } };
   const calls = [];
   const single = {
     getNode: () => node,
@@ -36,7 +39,7 @@ function setup(parameters = {}, response = page(), failure) {
     const mapped = routing.getRequestOptionsFromParameters(single, p, 0, 0, '', { $value: node.parameters[p.name], $version: 1 });
     routing.mergeOptions(data, mapped);
   }
-  return { node, workflow, single, routing, data, calls, run: () => routing.makeRequest(data, single, 0, 0, 'curatedFindsApi', data.requestOperations) };
+  return { node, workflow, single, routing, data, calls, credentialReads, run: async () => { const { credentialDescription } = await routing.prepareCredentials(); return routing.makeRequest(data, single, 0, 0, credentialDescription.name, data.requestOperations); } };
 }
 
 test('native n8n routing maps a single authenticated bounded GET and retains the page envelope', async () => {
@@ -107,7 +110,7 @@ test('credential auth uses the encrypted credential expression and has no secret
 
 test('single service discovery metadata and AI-tool support are exposed', () => {
   assert.equal(nodeType.description.usableAsTool, true);
-  assert.deepEqual(nodeType.description.credentials.map(c => c.name), ['curatedFindsApi']);
+  assert.deepEqual(nodeType.description.credentials.map(c => c.name), ['curatedFindsApi', 'curatedFindsRapidApi']);
   assert.equal(nodeType.description.properties.find(p => p.name === 'operation').options.length, 1);
 });
 
@@ -168,6 +171,62 @@ test('the actual n8n package loader registers this node and credential without a
   const loader = new PackageDirectoryLoader(process.cwd());
   await loader.loadAll();
   assert.deepEqual(Object.keys(loader.nodeTypes), ['curatedFinds']);
-  assert.deepEqual(Object.keys(loader.credentialTypes), ['curatedFindsApi']);
+  assert.deepEqual(Object.keys(loader.credentialTypes), ['curatedFindsApi', 'curatedFindsRapidApi']);
   assert.deepEqual(loader.known.credentials.curatedFindsApi.supportedNodes, ['curatedFinds']);
+});
+
+
+test('RapidAPI uses its own credential and fixed gateway, with no invented quota', async () => {
+  const response = { version: 'fixture-v1', total: 12, records: page().records };
+  const h = setup({ authentication: 'rapidapi', query: 'SpeechBrain', pageSize: 1, offset: 2 }, response);
+  assert.equal(h.data.options.baseURL, 'https://software-library-search.p.rapidapi.com');
+  assert.equal(h.routing.resolveBaseUrl(0, 0, undefined, h.single, { $parameter: {}, $rawParameter: {} }), 'https://software-library-search.p.rapidapi.com');
+  const [{ json }] = await h.run();
+  assert.deepEqual(h.credentialReads, ['curatedFindsRapidApi']);
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.calls[0].name, 'curatedFindsRapidApi');
+  assert.equal(h.calls[0].options.baseURL, 'https://software-library-search.p.rapidapi.com');
+  assert.equal(h.calls[0].options.url, '/search');
+  assert.equal(h.calls[0].options.disableFollowRedirect, true);
+  assert.equal(h.calls[0].options.timeout, 30000);
+  assert.equal(json.nextOffset, 3);
+  assert.equal(Object.hasOwn(json, 'remaining'), false);
+});
+
+test('legacy workflows without authentication retain Direct credentials and service', async () => {
+  const legacy = { resource: 'software', operation: 'search', query: 'SpeechBrain', pageSize: 1, offset: 0 };
+  const mapped = NodeHelpers.getNodeParameters(nodeType.description.properties, legacy, true, false, { typeVersion: 1 }, nodeType.description);
+  assert.equal(mapped.authentication, 'direct');
+  const h = setup(mapped);
+  await h.run();
+  assert.deepEqual(h.credentialReads, ['curatedFindsApi']);
+  assert.equal(h.calls[0].options.baseURL, 'https://www.myworkingmemory.ai/api/software-library/direct');
+});
+
+test('RapidAPI auth is separate, secret-free by default and fixed to this product host', () => {
+  assert.equal(rapidCredential.properties.find(p => p.name === 'apiKey').typeOptions.password, true);
+  assert.equal(rapidCredential.properties.find(p => p.name === 'apiKey').default, '');
+  assert.deepEqual(rapidCredential.authenticate.properties.headers, {
+    'X-RapidAPI-Key': '={{$credentials.apiKey}}',
+    'X-RapidAPI-Host': 'software-library-search.p.rapidapi.com',
+  });
+  assert.equal(rapidCredential.test.request.baseURL, 'https://software-library-search.p.rapidapi.com');
+  assert.deepEqual(rapidCredential.test.request.qs, { query: 'SpeechBrain', limit: 1, offset: 0 });
+  assert.equal(rapidCredential.test.request.disableFollowRedirect, true);
+});
+
+test('RapidAPI response shape, final pages, empty results and errors remain explicit', async () => {
+  for (const output of ['raw', 'simplified', 'selected']) {
+    const h = setup({ authentication: 'rapidapi', output }, { version: 'fixture-v1', total: 1, records: page().records });
+    const [{ json }] = await h.run();
+    assert.equal(json.nextOffset, null);
+    assert.equal(Object.hasOwn(json, 'remaining'), false);
+    for (const key of ['id', 'sourceURL', 'reviewedAt', 'evidenceLimits']) assert.deepEqual(json.records[0][key], page().records[0][key]);
+  }
+  const h = setup({ authentication: 'rapidapi' }, { version: 'fixture-v1', total: 0, records: [] });
+  assert.equal((await h.run())[0].json.nextOffset, null);
+  for (const response of [{ error: 'unauthorized' }, { version: 'fixture-v1', total: -1, records: [] }]) {
+    await assert.rejects(setup({ authentication: 'rapidapi' }, response).run(), /unexpected response/);
+  }
+  await assert.rejects(setup({ authentication: 'https://untrusted.example' }).run());
 });

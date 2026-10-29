@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Add a separate RapidAPI credential and connection for the existing Software Library Search product.
+- Preserve Direct credentials and defaults for existing workflows.
+- Handle RapidAPI page responses without inventing remaining quota; derive the next offset without another call.
+- Add RapidAPI setup examples and native routing, credential-selection and compatibility tests.
+
 ## 0.1.2
 
 - Correct the package author email to dean@myworkingmemory.ai and add the working support address to the README.

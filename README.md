@@ -1,78 +1,93 @@
 # Myworkingmemory Curated Finds for n8n
 
-Search [Curated Finds](https://www.myworkingmemory.ai/curated-finds-docs.html), Myworkingmemory's source-reviewed catalogue of software and models, from an n8n workflow or AI agent. Results include source links, setup requirements, license declarations, evidence limits and original review dates.
+Search Myworkingmemory's **Software Library Search / Curated Finds** catalogue from an n8n workflow or AI agent. Results contain source links, descriptions, setup requirements, license declarations, evidence limits and original review dates.
 
-This package integrates the existing **Curated Finds Direct API**. An Apify, MCPize, RapidAPI or API.market subscription does not provide a direct API key. [n8n](https://n8n.io/) is a workflow automation platform.
+Use your existing **[RapidAPI subscription](https://rapidapi.com/Myworkingmemory/api/software-library-search)** or **[Curated Finds Direct subscription](https://www.myworkingmemory.ai/apis/curated-finds)**. They are separate billing routes for the same catalogue; their keys are not interchangeable. Apify, MCPize and API.market keys do not work with these two connections.
 
 ## Installation
 
-Self-hosted users can install [`n8n-nodes-curated-finds`](https://www.npmjs.com/package/n8n-nodes-curated-finds) under **Settings → Community Nodes**, following [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/). This package is not yet verified by n8n. n8n Cloud installation requires separate n8n verification. Do not treat a public GitHub repository or npm package as evidence of Cloud availability.
+Self-hosted users can install [`n8n-nodes-curated-finds`](https://www.npmjs.com/package/n8n-nodes-curated-finds) under **Settings → Community Nodes**, following [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/). Search the node picker for **Myworkingmemory**, **Curated Finds**, **Software Library Search** or **RapidAPI**, then select **Myworkingmemory Curated Finds**.
 
-After installation, search the node picker for **Myworkingmemory**, **My Working Memory**, **Curated Finds** or **software search**, then select **Myworkingmemory Curated Finds**. The npm package name remains `n8n-nodes-curated-finds`.
+This package is not yet verified by n8n. n8n Cloud installation requires separate verification; npm publication does not establish Cloud availability.
 
-For local development, see [Compatibility and development](#compatibility-and-development).
+## Connect RapidAPI
 
-## Credentials and lookup use
+1. Open [Software Library Search on RapidAPI](https://rapidapi.com/Myworkingmemory/api/software-library-search) and use an application with access to that API.
+2. In the n8n node, select **Connection → RapidAPI**.
+3. Create a **Myworkingmemory Curated Finds (RapidAPI) API** credential. Paste that application's `X-RapidAPI-Key` from the [RapidAPI playground](https://rapidapi.com/Myworkingmemory/api/software-library-search/playground/searchSoftware).
+4. Select the saved credential. Your key is encrypted in n8n, never placed in workflow parameters or example JSON.
 
-1. Open [Myworkingmemory APIs](https://www.myworkingmemory.ai/apis), subscribe to Curated Finds Direct, or sign in to an existing subscription.
-2. Select **Show API key**, then copy your `cf_…` key into an n8n **Myworkingmemory Curated Finds API** credential. n8n encrypts credentials at rest; never put this key in a workflow parameter or example JSON.
-3. Select that credential on the Myworkingmemory Curated Finds node.
+**Saving or testing this credential sends one real search request** (`query=SpeechBrain`, `limit=1`, `offset=0`). It counts toward the selected plan and may incur its charges. A free plan with one request can be consumed by this credential test, leaving no workflow request. Check [current RapidAPI pricing](https://rapidapi.com/Myworkingmemory/api/software-library-search/pricing), quota and bandwidth terms before running. The node does not buy or change a plan.
 
-**Saving or testing this credential in n8n can run a real search and uses one included lookup per test.** The test is fixed to `query=n8n`, `limit=1`, `offset=0`; an empty result still uses one lookup. n8n shows this notice in the credential form. A successful test confirms actual authenticated access, not only key format. The node does not perform a separate startup search when a workflow runs.
+Requests use only:
 
-The current direct plan is **$5.99 USD/month for 1,000 lookups**, shared between the website reader and direct API. Each accepted search page, including a valid empty page, uses one lookup and returns up to 25 records. The allowance is hard capped; it does not automatically buy more calls. n8n hosting and model-provider costs are separate. The [current offer and terms](https://www.myworkingmemory.ai/curated-finds-docs.html#pricing) govern.
+```text
+GET https://software-library-search.p.rapidapi.com/search
+X-RapidAPI-Host: software-library-search.p.rapidapi.com
+X-RapidAPI-Key: <your encrypted RapidAPI credential>
+```
 
-A cancelled, failed-delivery or timed-out request may already have used a lookup. Keep **Retry On Fail** off, inspect your account before retrying, and request later pages explicitly. Each input item causes one search request; use n8n's **Execute Once** setting when your workflow should make only one search.
+## Connect Direct
 
-## Operation
+1. Open [Curated Finds Direct](https://www.myworkingmemory.ai/apis/curated-finds) and sign in to your subscription, or review the subscription there.
+2. Select **Show API key** and copy your `cf_…` key into a **Myworkingmemory Curated Finds API** credential.
+3. Select **Connection → Direct** and that credential.
 
-**Software → Search** calls:
+Direct remains the default to preserve existing workflows from versions 0.1.x. **Saving or testing a Direct credential uses one included lookup**, fixed to `query=n8n`, `limit=1`, `offset=0`, even with no matches. Direct currently costs $5.99/month for 1,000 lookups shared with the website reader, with a hard allowance cap. See the [current offer and terms](https://www.myworkingmemory.ai/curated-finds-docs.html#pricing).
 
 ```text
 GET https://www.myworkingmemory.ai/api/software-library/direct/search
-Authorization: Bearer <your encrypted credential>
+Authorization: Bearer <your encrypted Direct credential>
 ```
+
+## Search and output
+
+**Software → Search** sends one request per input item. Use **Execute Once** if your workflow should make only one request. n8n hosting and AI-model costs are separate.
 
 | Field | Behaviour |
 | --- | --- |
 | Query | Optional text, maximum 200 characters; blank lists matching records. |
-| Page Size | API `limit`, integer 1–25; default 10. |
+| Page Size | Integer 1–25; default 10. |
 | Category | Optional existing filter value, maximum 100 characters. |
 | Platform | Optional existing filter value, maximum 100 characters. |
-| Offset | Integer 0–10,000; default 0. For another page, explicitly use the previous `nextOffset`. |
+| Offset | Integer 0–10,000; default 0. Use `nextOffset` explicitly to request another page. |
 
-The node returns **one page envelope per input item**, preserving `version`, `total`, `records`, `nextOffset` and `remaining`. The Output option defaults to Raw (all record fields); Simplified returns ten useful fields; Selected Fields includes your choices plus ID, source URL, original review date and evidence limits. Every mode preserves the page and allowance envelope. It does not split records automatically, discard empty pages or invent a coverage guarantee. Use n8n's Split Out node on `records` only after saving any page and allowance information you need. Compare `version` between pages. Source review does not prove installation, runtime compatibility, accessibility fit or freshness beyond the record's stated review date.
+Each input returns one page with `version`, `total`, `records` and `nextOffset`. **RapidAPI's nextOffset is calculated from the requested offset and returned record count; its JSON does not report remaining plan quota.** Direct additionally returns `remaining`. No RapidAPI quota is invented.
 
-There is no automatic pagination or node-level retry. Requests go only to the fixed HTTPS service origin, refuse redirects and cap decoded responses at 1 MiB. Workflow searches enforce a 30-second timeout. n8n 2.45.5 controls native credential-test timing and may wait up to five minutes. Its authentication helper can retry a rejected authentication request once; rejected credentials do not use the service lookup allowance. Authentication, allowance and service failures remain errors. Each subsequent page and each new AI-tool invocation is another lookup.
+Output defaults to **Raw** (all record fields). **Simplified** returns ten useful fields. **Selected Fields** returns chosen fields plus ID, source URL, original review date and evidence limits. All modes retain the page envelope. Use n8n's Split Out node on `records` only after retaining page information you need. Compare catalogue `version` between pages.
 
-The direct API currently provides search only. This node does not invent record-by-ID, catalogue-info, date filtering, installation or software-execution operations.
+The node supports one-page search through both connections. It does not run or install the catalogue's tools, provide date filters, or implement the other RapidAPI endpoints. Source review does not prove runtime compatibility, accessibility fit or freshness beyond each record's review date.
 
-## Example workflow
+## Request limits
 
-Import [`examples/search-software.json`](examples/search-software.json) after installing the package. It contains:
+There is no automatic pagination or node-level retry. Each request goes to the selected fixed HTTPS host, refuses redirects and caps decoded responses at 1 MiB. Workflow searches enforce 30 seconds. n8n 2.45.5 controls credential-test timing and may wait up to five minutes; its authentication helper may retry a rejected authentication request once. Plan rules determine whether failed requests count. Keep **Retry On Fail** off and inspect usage before retrying a timeout, since the request may already have been processed.
 
-**Manual Trigger → Myworkingmemory Curated Finds → Review page and remaining allowance**
+Authentication, allowance and service failures remain errors. A successful empty page still uses a request. Every later page and every new AI-tool invocation is another request.
 
-The example has no credentials, saved data, active schedule or automatic retry. Add your own credential. Search uses `SpeechBrain`, page size 3 and offset 0; executing it uses one lookup, in addition to any credential test. The last node preserves the full response for inspection.
+## Examples and AI tools
 
-For an AI agent, add Myworkingmemory Curated Finds as a tool, select your own credential, and set a small fixed page size. The node advertises `usableAsTool: true`; the agent's repeated tool calls are separate lookups, so configure the agent's iteration limits and approval behaviour for your workflow. This package never supplies the publisher's credentials.
+- [RapidAPI workflow](examples/search-software-rapidapi.json): Manual Trigger → Myworkingmemory Curated Finds → Review catalogue page.
+- [Direct workflow](examples/search-software.json): preserves the original Direct connection and allowance output.
+
+Both examples are inactive, credential-free and have no saved execution data or retries. They search `SpeechBrain`, page size 3, offset 0. Each execution sends one request in addition to any credential test.
+
+For an AI agent, add **Myworkingmemory Curated Finds** as a tool, choose the correct connection and your credential, and set a small fixed page size. `usableAsTool: true` is enabled. Configure agent iteration limits: repeated tool invocations consume separate requests. The publisher's credentials are never provided to customers.
 
 ## Compatibility and development
 
-Generated with the official `npm create @n8n/node` declarative HTTP template. Source checks use `@n8n/node-cli` 0.55.1. Mocked integration tests use the exact core/workflow package versions from n8n 2.45.5 (`n8n-core` 2.45.4 and `n8n-workflow` 2.45.2). This is a compatibility target, not a claim that every n8n release or an AI-model execution has been tested.
+Built with the official n8n declarative node CLI 0.55.1. Offline tests use n8n-core 2.45.4 and n8n-workflow 2.45.2 from n8n 2.45.5, exercising the native loader, parameter mapping, credential selection, routing and hooks with mocked HTTP. This does not claim a live API request, browser credential test or AI-model execution. See [VALIDATION.md](VALIDATION.md).
 
-Use a current Node.js 24 LTS version for the development/release toolchain, then:
+Use Node.js 24 LTS:
 
 ```sh
 npm ci
 npm run check
+npm run scan:local
 npm run dev
 ```
 
-`npm run dev` starts an isolated local n8n development instance. Do not attach a real product credential unless you intend to spend its lookup allowance. Tests use the actual n8n routing and expression engine with mocked HTTP transport and make no paid API calls. They do not exercise the browser credential form or a real model invocation. See [VALIDATION.md](VALIDATION.md) for the exact completed checks and publication prerequisites.
-
 ## Publishing and support
 
-The MIT-licensed source is available at [myworkingmemory/n8n-nodes-curated-finds](https://github.com/myworkingmemory/n8n-nodes-curated-finds), and the package is published on [npm](https://www.npmjs.com/package/n8n-nodes-curated-finds). Releases use the tag-triggered `.github/workflows/publish.yml` GitHub Action with npm provenance. Maintainers must ensure authorized npm publication access is configured before pushing a release tag. n8n Cloud verification remains separate from npm publication.
+Source: [myworkingmemory/n8n-nodes-curated-finds](https://github.com/myworkingmemory/n8n-nodes-curated-finds). Releases use the tag-triggered `.github/workflows/publish.yml` GitHub Action with npm provenance and the authorized package-specific trusted publisher. Verification by n8n is a separate step.
 
-Product documentation: [Curated Finds API](https://www.myworkingmemory.ai/curated-finds-docs.html). Support: [dean@myworkingmemory.ai](mailto:dean@myworkingmemory.ai) or the [Myworkingmemory support page](https://www.myworkingmemory.ai/software-library-support.html). License: [MIT](LICENSE).
+Documentation: [Curated Finds API](https://www.myworkingmemory.ai/curated-finds-docs.html). Support: [dean@myworkingmemory.ai](mailto:dean@myworkingmemory.ai) or [Myworkingmemory support](https://www.myworkingmemory.ai/software-library-support.html). License: [MIT](LICENSE).

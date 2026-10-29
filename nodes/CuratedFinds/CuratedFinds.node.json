@@ -6,7 +6,9 @@
     "Myworkingmemory",
     "My Working Memory",
     "Curated Finds",
-    "software search"
+    "software search",
+    "Software Library Search",
+    "RapidAPI"
   ],
   "categories": [
     "Development"
@@ -15,6 +17,9 @@
     "credentialDocumentation": [
       {
         "url": "https://www.myworkingmemory.ai/curated-finds-docs.html#api"
+      },
+      {
+        "url": "https://rapidapi.com/Myworkingmemory/api/software-library-search"
       }
     ],
     "primaryDocumentation": [

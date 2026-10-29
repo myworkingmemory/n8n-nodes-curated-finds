@@ -1,5 +1,20 @@
 # Validation and release record
 
+## October 29, 2026 — version 0.2.0 RapidAPI support
+
+The signed-in RapidAPI provider dashboard confirms the existing public **Software Library Search** product (Curated Finds), ID `api_3c54d1a7-96c5-4496-a450-94d76b37a548`. Its customer playground shows `GET https://software-library-search.p.rapidapi.com/search` with `X-RapidAPI-Key` and `X-RapidAPI-Host`. The API's search response contains `version`, `total`, and `records`; the node derives the next offset but never invents remaining RapidAPI quota.
+
+- Added a separate RapidAPI credential and a Connection selector. Existing workflows without the selector retain Direct through n8n's native defaults.
+- Official CLI lint and build pass; all **17 offline tests** pass. Tests now exercise native credential selection and node-owned base URL resolution as well as request routing, output, errors, legacy defaults and package loading.
+- Official source and packed-artifact scanner both pass for 0.2.0.
+- Added an inactive, credential-free RapidAPI example. Existing Direct example remains available.
+- No live API calls, browser credential tests or completed AI-agent executions are claimed by these checks.
+- 0.1.2 is public with valid provenance and passed n8n automated review; the Creator portal requires an uncut video before manual review. That pass does not apply automatically to 0.2.0. Release 0.2.0 and its published-package/provenance scan are pending at this preparation step.
+- The package-specific npm trusted publisher is valid for `myworkingmemory/n8n-nodes-curated-finds`, `publish.yml`; temporary npm tokens and the old GitHub secret were removed. Future releases use the authorized OIDC workflow.
+
+Historical preparation notes below describe earlier versions; the current status above supersedes their pending-publication instructions.
+
+
 Prepared October 28, 2026. This package is a native integration for the existing **Curated Finds Direct** service, not a generic Apify wrapper. No website server, existing workflow, account, credential or subscription was changed during package construction.
 
 ## Completed checks

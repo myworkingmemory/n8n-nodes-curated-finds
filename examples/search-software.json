@@ -35,7 +35,8 @@
           "purpose",
           "type",
           "requirements"
-        ]
+        ],
+        "authentication": "direct"
       },
       "executeOnce": true,
       "retryOnFail": false
@@ -61,7 +62,7 @@
         -300
       ],
       "parameters": {
-        "content": "## Myworkingmemory Curated Finds \u2014 one explicit search\nInstall n8n-nodes-curated-finds, create a Myworkingmemory Curated Finds API credential with your own direct subscription key from https://www.myworkingmemory.ai/apis, and select it on Myworkingmemory Curated Finds.\n\nSaving or testing the credential may use one lookup per test. Clicking Execute uses one additional lookup. Direct access is $5.99/month for 1,000 lookups, separate from n8n and marketplace subscriptions. The output preserves version, total, records, nextOffset and remaining. No automatic pagination or node-level retries. Source-reviewed records are not proof the listed tools were installed or run.",
+        "content": "## Myworkingmemory Curated Finds \u2014 one explicit search\nInstall n8n-nodes-curated-finds, create a Myworkingmemory Curated Finds API credential with your own direct subscription key from https://www.myworkingmemory.ai/apis/curated-finds, and select it on Myworkingmemory Curated Finds.\n\nSaving or testing the credential may use one lookup per test. Clicking Execute uses one additional lookup. Direct access is $5.99/month for 1,000 lookups, separate from n8n and marketplace subscriptions. The output preserves version, total, records, nextOffset and remaining. No automatic pagination or node-level retries. Source-reviewed records are not proof the listed tools were installed or run.",
         "height": 260,
         "width": 700
       }

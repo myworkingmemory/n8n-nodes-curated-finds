@@ -1,0 +1,103 @@
+{
+  "name": "Find software with Myworkingmemory via RapidAPI",
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "When clicking Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "search",
+      "name": "Myworkingmemory Curated Finds",
+      "type": "n8n-nodes-curated-finds.curatedFinds",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "software",
+        "operation": "search",
+        "query": "SpeechBrain",
+        "pageSize": 3,
+        "category": "",
+        "platform": "",
+        "offset": 0,
+        "output": "raw",
+        "fields": [
+          "name",
+          "purpose",
+          "type",
+          "requirements"
+        ],
+        "authentication": "rapidapi"
+      },
+      "executeOnce": true,
+      "retryOnFail": false
+    },
+    {
+      "id": "result",
+      "name": "Review catalogue page",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "setup",
+      "name": "Setup and paid lookup notice",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ],
+      "parameters": {
+        "content": "## Myworkingmemory Curated Finds via RapidAPI\nInstall n8n-nodes-curated-finds@0.2.0. Use your Software Library Search subscription from https://rapidapi.com/Myworkingmemory/api/software-library-search. Select Connection: RapidAPI and create a Myworkingmemory Curated Finds (RapidAPI) API credential using your X-RapidAPI-Key.\n\nEach credential test sends one real request. Each execution sends one further request. RapidAPI plan allowance, charges and n8n hosting/model costs are separate. A one-request free plan can be consumed by the credential test. No automatic pagination or node retries. nextOffset is calculated from the page; remaining plan quota is not supplied in the JSON. Source-reviewed records are not runtime guarantees.",
+        "height": 260,
+        "width": 700
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Myworkingmemory Curated Finds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Myworkingmemory Curated Finds": {
+      "main": [
+        [
+          {
+            "node": "Review catalogue page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
