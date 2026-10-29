@@ -2,7 +2,22 @@
 
 Search Myworkingmemory's **Software Library Search / Curated Finds** catalogue from an n8n workflow or AI agent. Results contain source links, descriptions, setup requirements, license declarations, evidence limits and original review dates.
 
-Use your existing **[RapidAPI subscription](https://rapidapi.com/Myworkingmemory/api/software-library-search)** or **[Curated Finds Direct subscription](https://www.myworkingmemory.ai/apis/curated-finds)**. They are separate billing routes for the same catalogue; their keys are not interchangeable. Apify, MCPize and API.market keys do not work with these two connections.
+Use your existing **[RapidAPI subscription](https://rapidapi.com/Myworkingmemory/api/software-library-search)** or **[Curated Finds Direct subscription](https://www.myworkingmemory.ai/apis/curated-finds)**. They are separate billing routes for the same catalogue; their keys are not interchangeable. Apify has a separate connection in version 0.3.0; use an Apify API token for it. MCPize and API.market keys do not work with these connections.
+
+
+## Apify connection — 0.3.0
+
+Version 0.3.0 adds **Connection: Apify** for the existing [Myworkingmemory Software Library Search Actor](https://apify.com/myworkingmemory/software-library-search). The connection is checked offline; the validation record identifies the live verification scope.
+
+1. Select **Apify** and create a **Myworkingmemory Curated Finds (Apify) API** credential with your existing Apify API token; restrict credential HTTP access to `api.apify.com`.
+2. Saving, reopening or testing that credential sends only `GET https://api.apify.com/v2/users/me`. It starts no Actor and buys no search page; it also does not establish paid-search eligibility.
+3. Set a finite **Maximum Run Charge (USD)**, default **$0.01** (allowed $0.01–$1). The node sends one authenticated `POST` to `https://api.apify.com/v2/acts/ghlTCYxrSCV2k1UzV/run-sync`, with `timeout=30`, `memory=256`, `restartOnError=false`, `maxTotalChargeUsd` and `outputRecordKey=OUTPUT`.
+4. For the fixed sample, enable **Fixed Preview**, set **Page Size 3**, leave Query/Category/Platform blank and Offset 0. The same three sample records return each time; this is not a keyword search and has no catalog-search event charge, though platform/storage costs can apply.
+5. For a full search, leave Fixed Preview off and supply the normal filters. The current Actor charges **$0.00599 per completed search page**, including an empty page, and requires an eligible paid Apify account. Your Apify account, credit and charges are separate from RapidAPI and Direct; the node never buys a plan.
+
+Each input item or AI tool invocation starts a separate Actor run with its own cap. Keep Retry On Fail off. The HTTP timeout is 60 seconds while the Actor runtime is capped at 30 seconds; startup can also take time. A disconnected/timed-out request may have started a billable run: inspect Apify Runs before trying again. The node makes no automatic retry, paging or second request to recover a run. The Actor's OUTPUT retains catalogue version, total, preview/search mode and evidence; nextOffset is derived from the returned page, and remaining account quota is never invented.
+
+The credential-free [Apify preview example](examples/search-software-apify.json) is inactive and starts nothing until manually executed with your credential.
 
 ## Installation
 
@@ -56,11 +71,11 @@ Each input returns one page with `version`, `total`, `records` and `nextOffset`.
 
 Output defaults to **Raw** (all record fields). **Simplified** returns ten useful fields. **Selected Fields** returns chosen fields plus ID, source URL, original review date and evidence limits. All modes retain the page envelope. Use n8n's Split Out node on `records` only after retaining page information you need. Compare catalogue `version` between pages.
 
-The node supports one-page search through both connections. It does not run or install the catalogue's tools, provide date filters, or implement the other RapidAPI endpoints. Source review does not prove runtime compatibility, accessibility fit or freshness beyond each record's review date.
+The node supports one-page search through all three connections. It does not run or install the catalogue's tools, provide date filters, or implement the other RapidAPI endpoints. Source review does not prove runtime compatibility, accessibility fit or freshness beyond each record's review date.
 
 ## Request limits
 
-There is no automatic pagination or node-level retry. Each request goes to the selected fixed HTTPS host, refuses redirects and caps decoded responses at 1 MiB. Workflow searches enforce 30 seconds. n8n 2.45.5 controls credential-test timing and may wait up to five minutes; its authentication helper may retry a rejected authentication request once. Plan rules determine whether failed requests count. Keep **Retry On Fail** off and inspect usage before retrying a timeout, since the request may already have been processed.
+There is no automatic pagination or node-level retry. Each request goes to the selected fixed HTTPS host, refuses redirects and caps decoded responses at 1 MiB. Direct and RapidAPI workflow searches enforce 30 seconds; the Apify HTTP request enforces 60 seconds and its Actor runtime is capped at 30 seconds. n8n 2.45.5 controls credential-test timing and may wait up to five minutes; its authentication helper may retry a rejected authentication request once. Plan rules determine whether failed requests count. Keep **Retry On Fail** off and inspect usage before retrying a timeout, since the request may already have been processed.
 
 Authentication, allowance and service failures remain errors. A successful empty page still uses a request. Every later page and every new AI-tool invocation is another request.
 

@@ -1,0 +1,105 @@
+{
+  "name": "Preview Myworkingmemory software records through Apify",
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "When clicking Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "search",
+      "name": "Myworkingmemory Curated Finds",
+      "type": "n8n-nodes-curated-finds.curatedFinds",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "software",
+        "operation": "search",
+        "query": "",
+        "pageSize": 3,
+        "category": "",
+        "platform": "",
+        "offset": 0,
+        "output": "raw",
+        "fields": [
+          "name",
+          "purpose",
+          "type",
+          "requirements"
+        ],
+        "authentication": "apify",
+        "preview": true,
+        "maxTotalChargeUsd": 0.01
+      },
+      "executeOnce": true,
+      "retryOnFail": false
+    },
+    {
+      "id": "result",
+      "name": "Review catalogue page",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "setup",
+      "name": "Apify fixed preview setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -300
+      ],
+      "parameters": {
+        "content": "## Myworkingmemory Curated Finds via Apify\nRequires n8n-nodes-curated-finds@0.3.0 or later. Select Connection: Apify and create its separate credential with your Apify token, restricted to api.apify.com. Credential tests check the account without starting an Actor.\n\nThis example returns the SAME THREE SAMPLE RECORDS, not keyword search results. Fixed Preview is on, Page Size is 3, filters are blank and Offset is 0. No catalog-search event is requested; platform/storage costs can apply. The run cap is $0.01, Actor runtime 30s, memory 256MB, no restart, no node retry or paging. Each execution/input is a separate run. Full searches require Fixed Preview off and an eligible Apify account. After a timeout inspect Apify Runs before retrying. Source-reviewed metadata is not runtime-tested software.",
+        "height": 260,
+        "width": 700
+      }
+    }
+  ],
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Myworkingmemory Curated Finds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Myworkingmemory Curated Finds": {
+      "main": [
+        [
+          {
+            "node": "Review catalogue page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

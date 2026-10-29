@@ -17,6 +17,7 @@ export class CuratedFinds implements INodeType {
 		credentials: [
 			{ name: 'curatedFindsApi', required: true, displayOptions: { show: { authentication: ['direct'] } } },
 			{ name: 'curatedFindsRapidApi', required: true, displayOptions: { show: { authentication: ['rapidapi'] } } },
+			{ name: 'curatedFindsApifyApi', required: true, displayOptions: { show: { authentication: ['apify'] } } },
 		],
 		requestDefaults: {
 			baseURL: 'https://www.myworkingmemory.ai/api/software-library/direct',
@@ -33,11 +34,29 @@ export class CuratedFinds implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
+					{ name: 'Apify', value: 'apify', description: 'Run the Myworkingmemory Software Library Search Actor with your Apify account', routing: { request: { baseURL: 'https://api.apify.com' } } },
 					{ name: 'Direct', value: 'direct', description: 'Use your Myworkingmemory direct subscription key', routing: { request: { baseURL: 'https://www.myworkingmemory.ai/api/software-library/direct' } } },
 					{ name: 'RapidAPI', value: 'rapidapi', description: 'Use your existing Software Library Search subscription on RapidAPI', routing: { request: { baseURL: 'https://software-library-search.p.rapidapi.com' } } },
 				],
 				default: 'direct',
 				description: 'Where your subscription is held. Direct remains the default to preserve existing workflows.',
+			},
+			{
+				displayName: 'Fixed Preview',
+				name: 'preview',
+				type: 'boolean',
+				displayOptions: { show: { authentication: ['apify'] } },
+				default: false,
+				description: 'Whether to return the same three sample records without a catalog-search event charge. Set Page Size to 3, leave filters blank and Offset at 0. This does not search; platform/storage costs can still apply.',
+			},
+			{
+				displayName: 'Maximum Run Charge (USD)',
+				name: 'maxTotalChargeUsd',
+				type: 'number',
+				displayOptions: { show: { authentication: ['apify'] } },
+				default: 0.01,
+				typeOptions: { minValue: 0.01, maxValue: 1, numberPrecision: 2 },
+				description: 'Apify run spending cap, from $0.01 to $1. Each input or AI tool invocation starts a separate run with this cap; it is not an aggregate workflow budget. Paid search requires an eligible Apify account.',
 			},
 			{
 				displayName: 'Resource',
@@ -69,7 +88,7 @@ export class CuratedFinds implements INodeType {
 				default: 'search',
 			},
 			{
-				displayName: 'Each input item sends one search request to your selected service, including an empty result. Your selected plan determines allowance and charges. A timeout may already have used a request. There is no automatic pagination or node-level retry. Keep Retry On Fail off.',
+				displayName: 'Each input item sends one search request to your selected service, including an empty result. Apify Fixed Preview returns a fixed sample instead of searching. Your selected plan determines allowance and charges. A timeout may already have used a request. There is no automatic pagination or node-level retry. Keep Retry On Fail off.',
 				name: 'usageNotice',
 				type: 'notice',
 				default: '',

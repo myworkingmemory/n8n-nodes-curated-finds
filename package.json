@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-curated-finds",
-  "version": "0.2.0",
-  "description": "Search Myworkingmemory Curated Finds software and models using your RapidAPI or Direct subscription.",
+  "version": "0.3.0",
+  "description": "Search Myworkingmemory Curated Finds software and models through Apify, RapidAPI or Direct.",
   "license": "MIT",
   "homepage": "https://www.myworkingmemory.ai/curated-finds-docs.html",
   "keywords": [
@@ -44,7 +44,8 @@
     "strict": true,
     "credentials": [
       "dist/credentials/CuratedFindsApi.credentials.js",
-      "dist/credentials/CuratedFindsRapidApi.credentials.js"
+      "dist/credentials/CuratedFindsRapidApi.credentials.js",
+      "dist/credentials/CuratedFindsApifyApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/CuratedFinds/CuratedFinds.node.js"

@@ -7,6 +7,8 @@ const { CuratedFinds } = require('../dist/nodes/CuratedFinds/CuratedFinds.node.j
 const { CuratedFindsApi } = require('../dist/credentials/CuratedFindsApi.credentials.js');
 const { CuratedFindsRapidApi } = require('../dist/credentials/CuratedFindsRapidApi.credentials.js');
 const rapidCredential = new CuratedFindsRapidApi();
+const { CuratedFindsApifyApi } = require('../dist/credentials/CuratedFindsApifyApi.credentials.js');
+const apifyCredential = new CuratedFindsApifyApi();
 const { Workflow, NodeHelpers } = require('n8n-workflow');
 const { RoutingNode } = require('../node_modules/n8n-core/dist/execution-engine/routing-node.js');
 const nodeType = new CuratedFinds();
@@ -110,7 +112,7 @@ test('credential auth uses the encrypted credential expression and has no secret
 
 test('single service discovery metadata and AI-tool support are exposed', () => {
   assert.equal(nodeType.description.usableAsTool, true);
-  assert.deepEqual(nodeType.description.credentials.map(c => c.name), ['curatedFindsApi', 'curatedFindsRapidApi']);
+  assert.deepEqual(nodeType.description.credentials.map(c => c.name), ['curatedFindsApi', 'curatedFindsRapidApi', 'curatedFindsApifyApi']);
   assert.equal(nodeType.description.properties.find(p => p.name === 'operation').options.length, 1);
 });
 
@@ -171,7 +173,7 @@ test('the actual n8n package loader registers this node and credential without a
   const loader = new PackageDirectoryLoader(process.cwd());
   await loader.loadAll();
   assert.deepEqual(Object.keys(loader.nodeTypes), ['curatedFinds']);
-  assert.deepEqual(Object.keys(loader.credentialTypes), ['curatedFindsApi', 'curatedFindsRapidApi']);
+  assert.deepEqual(Object.keys(loader.credentialTypes), ['curatedFindsApi', 'curatedFindsRapidApi', 'curatedFindsApifyApi']);
   assert.deepEqual(loader.known.credentials.curatedFindsApi.supportedNodes, ['curatedFinds']);
 });
 
@@ -229,4 +231,81 @@ test('RapidAPI response shape, final pages, empty results and errors remain expl
     await assert.rejects(setup({ authentication: 'rapidapi' }, response).run(), /unexpected response/);
   }
   await assert.rejects(setup({ authentication: 'https://untrusted.example' }).run());
+});
+
+
+test('Apify routes one bounded POST to the fixed Actor and retains its OUTPUT envelope', async () => {
+  const response = { version: 'fixture-v1', total: 12, records: page().records, mode: 'search', returned: 1, offset: 2 };
+  const h = setup({ authentication: 'apify', query: 'SpeechBrain', pageSize: 1, offset: 2, maxTotalChargeUsd: 0.01 }, response);
+  assert.equal(h.routing.resolveBaseUrl(0, 0, undefined, h.single, { $parameter: {}, $rawParameter: {} }), 'https://api.apify.com');
+  const [{ json }] = await h.run();
+  assert.deepEqual(h.credentialReads, ['curatedFindsApifyApi']);
+  assert.equal(h.calls.length, 1);
+  const { name, options } = h.calls[0];
+  assert.equal(name, 'curatedFindsApifyApi');
+  assert.equal(options.baseURL, 'https://api.apify.com');
+  assert.equal(options.url, '/v2/acts/ghlTCYxrSCV2k1UzV/run-sync');
+  assert.equal(options.method, 'POST');
+  assert.deepEqual(options.body, { query: 'SpeechBrain', category: '', platform: '', limit: 1, offset: 2, preview: false });
+  assert.deepEqual(options.qs, { timeout: 30, memory: 256, maxTotalChargeUsd: 0.01, restartOnError: false, outputRecordKey: 'OUTPUT' });
+  assert.equal(options.timeout, 60000);
+  assert.equal(options.disableFollowRedirect, true);
+  assert.equal(options.maxRedirects, 0);
+  assert.equal(options.maxResponseBodyBytes, 1048576);
+  assert.equal(json.nextOffset, 3);
+  assert.equal(json.mode, 'search');
+  assert.equal(Object.hasOwn(json, 'remaining'), false);
+});
+
+test('Apify credential tests authenticate read-only without starting an Actor or consuming a search page', () => {
+  assert.deepEqual(apifyCredential.authenticate.properties.headers, { Authorization: '=Bearer {{$credentials.apiKey}}' });
+  assert.equal(apifyCredential.properties.find(p => p.name === 'apiKey').typeOptions.password, true);
+  assert.equal(apifyCredential.properties.find(p => p.name === 'apiKey').default, '');
+  assert.equal(apifyCredential.test.request.method, 'GET');
+  assert.equal(apifyCredential.test.request.baseURL, 'https://api.apify.com');
+  assert.equal(apifyCredential.test.request.url, '/v2/users/me');
+  assert.equal(apifyCredential.test.request.disableFollowRedirect, true);
+  assert.equal(apifyCredential.test.request.qs, undefined);
+  assert.equal(apifyCredential.test.request.body, undefined);
+});
+
+test('Apify validates spending and fixed-preview inputs before starting a run', async () => {
+  for (const overrides of [{ maxTotalChargeUsd: 0 }, { maxTotalChargeUsd: 0.009 }, { maxTotalChargeUsd: 1.01 }, { maxTotalChargeUsd: NaN }, { maxTotalChargeUsd: Infinity }, { maxTotalChargeUsd: '0.01' }, { preview: 'true' }, { preview: true, pageSize: 1 }, { preview: true, pageSize: 3, query: 'SpeechBrain' }, { preview: true, pageSize: 3, category: 'Audio' }, { preview: true, pageSize: 3, platform: 'Python' }, { preview: true, pageSize: 3, offset: 1 }]) {
+    const h = setup({ authentication: 'apify', ...overrides });
+    await assert.rejects(h.run());
+    assert.equal(h.calls.length, 0);
+  }
+});
+
+test('Apify fixed preview preserves actual mode and evidence across output modes', async () => {
+  const records = Array.from({ length: 3 }, (_, i) => ({ ...page().records[0], id: `fixture-${i}` }));
+  for (const output of ['raw', 'simplified', 'selected']) {
+    const h = setup({ authentication: 'apify', preview: true, pageSize: 3, output }, { version: 'fixture-v1', total: 3, records, mode: 'preview', returned: 3, offset: 0 });
+    const [{ json }] = await h.run();
+    assert.equal(h.calls.length, 1);
+    assert.equal(h.calls[0].options.body.preview, true);
+    assert.equal(json.mode, 'preview');
+    assert.equal(json.nextOffset, null);
+    assert.equal(json.total, 3);
+    assert.equal(json.records.length, 3);
+    assert.equal(Object.hasOwn(json, 'remaining'), false);
+    for (const key of ['id', 'sourceURL', 'reviewedAt', 'evidenceLimits']) assert.deepEqual(json.records[0][key], records[0][key]);
+  }
+  await assert.rejects(setup({ authentication: 'apify', preview: true, pageSize: 3 }, { version: 'fixture-v1', total: 3, records, mode: 'search' }).run(), /requested fixed preview/);
+});
+
+test('Apify propagates quota, plan, timeout and failure responses without retrying or returning false success', async () => {
+  for (const code of ['401', '403', '429', '408', '503', 'ETIMEDOUT']) {
+    const failure = new Error(code);
+    const h = setup({ authentication: 'apify' }, undefined, failure);
+    await assert.rejects(h.run(), e => e === failure);
+    assert.equal(h.calls.length, 1);
+  }
+  for (const body of [{ error: { type: 'actor-run-failed' } }, {}, { version: 'v1', total: 0, records: 'not-an-array' }]) {
+    await assert.rejects(setup({ authentication: 'apify' }, body).run(), /unexpected response/);
+  }
+  const h = setup({ authentication: 'apify' }, { version: 'v1', total: 0, records: [], mode: 'search' });
+  const [{ json }] = await h.run();
+  assert.equal(json.nextOffset, null);
+  assert.equal(h.calls.length, 1);
 });

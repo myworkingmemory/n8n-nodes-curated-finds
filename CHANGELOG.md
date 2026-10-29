@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- Add a dedicated Apify connection for Myworkingmemory Software Library Search, retaining Direct and RapidAPI defaults.
+- Run one fixed Actor with an explicit spending cap, bounded runtime/memory, no restart and no automatic paging.
+- Add fixed-preview support with blank filters, exactly three records and explicit preview labeling.
+- Authenticate Apify credentials through a read-only account check that does not start an Actor.
+- Preserve the Actor OUTPUT catalogue envelope and evidence fields without inventing remaining quota.
+
 ## 0.2.0
 
 - Add a separate RapidAPI credential and connection for the existing Software Library Search product.

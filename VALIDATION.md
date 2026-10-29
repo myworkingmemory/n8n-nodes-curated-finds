@@ -1,5 +1,16 @@
 # Validation and release record
 
+## October29 — prepared 0.3.0 Apify route
+
+- Added one dedicated Apify credential and a third connection, preserving Direct defaults and RapidAPI behavior.
+- Apify uses one bounded synchronous POST to the fixed existing Actor and returns its OUTPUT envelope; the credential test is a read-only GET /v2/users/me, which starts no Actor.
+- Existing public Actor metadata confirms build0.0.11, 256MB,30s default runtime, $0.01 cap, no restart, paid-page event price $0.00599 and a separate fixed preview.
+- All22 native offline tests, CLI lint and build pass; this includes legacy routes, credential selection, fixed URL/Actor, spend/input bounds, preview labeling, output evidence and errors without retries.
+- A successful earlier preview run exists through the separate MCP-based n8n workflow; an existing one-result search is also visible in Apify Console. Neither establishes live execution through this new native connection.
+- An authorized live search through the compiled native0.3.0 connection succeeded on October29: preview false, query SpeechBrain, limit1, $0.01 run cap,256MB,30s runtime, no restart. The returned OUTPUT contains one match, catalogue version, source/evidence fields and nextOffset:null. Apify credential authentication succeeded through read-only /v2/users/me and is restricted to api.apify.com in the private local demo.
+- Official local source and packed-artifact scans both passed for0.3.0. The AI-agent example, genuine uncut recording, npm publication/provenance and Creator-version alignment remain separate verification steps at this preparation point.
+
+
 ## October 29, 2026 — version 0.2.0 RapidAPI support
 
 The signed-in RapidAPI provider dashboard confirms the existing public **Software Library Search** product (Curated Finds), ID `api_3c54d1a7-96c5-4496-a450-94d76b37a548`. Its customer playground shows `GET https://software-library-search.p.rapidapi.com/search` with `X-RapidAPI-Key` and `X-RapidAPI-Host`. The API's search response contains `version`, `total`, and `records`; the node derives the next offset but never invents remaining RapidAPI quota.
