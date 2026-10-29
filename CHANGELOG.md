@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Correct installation and publication documentation after the initial npm release.
+- Record the 0.1.0 release and provenance status; node behaviour is unchanged.
+
 ## 0.1.0
 
 - Add one-page search of Curated Finds Direct with encrypted customer credentials.

@@ -6,7 +6,7 @@ This package integrates the existing **Curated Finds Direct API**. An Apify, MCP
 
 ## Installation
 
-This source package is prepared for publication; it is not yet published on npm or verified by n8n. Once published, self-hosted users can install `n8n-nodes-curated-finds` under **Settings → Community Nodes**, following [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/). n8n Cloud installation requires separate n8n verification. Do not treat a public GitHub repository or npm package as evidence of Cloud availability.
+Self-hosted users can install [`n8n-nodes-curated-finds`](https://www.npmjs.com/package/n8n-nodes-curated-finds) under **Settings → Community Nodes**, following [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/). This package is not yet verified by n8n. n8n Cloud installation requires separate n8n verification. Do not treat a public GitHub repository or npm package as evidence of Cloud availability.
 
 After installation, search the node picker for **Myworkingmemory**, **My Working Memory**, **Curated Finds** or **software search**, then select **Myworkingmemory Curated Finds**. The npm package name remains `n8n-nodes-curated-finds`.
 
@@ -73,6 +73,6 @@ npm run dev
 
 ## Publishing and support
 
-The MIT-licensed source is intended for `myworkingmemory/n8n-nodes-curated-finds`. `.github/workflows/publish.yml` publishes version tags with npm provenance. The repository and npm package must exist and the owner must configure npm trusted publishing (or a scoped npm publishing token) before release. The workflow is prepared; this README does not claim that external setup is complete. Do not publish from a local shell when seeking n8n verification.
+The MIT-licensed source is available at [myworkingmemory/n8n-nodes-curated-finds](https://github.com/myworkingmemory/n8n-nodes-curated-finds), and the package is published on [npm](https://www.npmjs.com/package/n8n-nodes-curated-finds). Releases use the tag-triggered `.github/workflows/publish.yml` GitHub Action with npm provenance. Maintainers must ensure authorized npm publication access is configured before pushing a release tag. n8n Cloud verification remains separate from npm publication.
 
 Product documentation: [Curated Finds API](https://www.myworkingmemory.ai/curated-finds-docs.html). Support: [Myworkingmemory support](https://www.myworkingmemory.ai/software-library-support.html). License: [MIT](LICENSE).

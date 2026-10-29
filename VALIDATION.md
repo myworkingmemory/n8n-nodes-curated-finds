@@ -31,12 +31,18 @@ The package itself does not retry or page automatically. n8n's authentication he
 
 Every workflow input item and every later AI-tool invocation can use another lookup. The example sets Execute Once and disables Retry On Fail. The direct plan is hard capped at 1,000 lookups per paid period, shared with the website reader; valid empty results count. Search results preserve catalogue version, total, next offset and remaining allowance. Simplified and selected output modes retain original source/review/evidence fields.
 
-## External publication steps
+## Publication status — October 29, 2026
+
+Version 0.1.0 was published from tag `0.1.0` at commit `4cbabd683e702ea814b698ff5d897b12a4f53198` by [GitHub Actions run 40905548930](https://github.com/myworkingmemory/n8n-nodes-curated-finds/actions/runs/40905548930). npm accepted the package and the workflow reported signed provenance with transparency-log index `3570854679`. Public availability was subsequently confirmed with `npm view` and the npm package website, with provenance present. The official published-package scanner has not yet run; n8n verification and Cloud availability are not claimed.
+
+Version 0.1.1 corrects the README's initial unpublished-package wording and records the release status. Only documentation and package-version metadata change; node and credential behaviour are unchanged. The documentation-only diff and package/lockfile version consistency were checked without repeating runtime tests. The release CI remains configured to run lint, build, the existing tests and local scans. Publication and the official published-package scan of 0.1.1 remain pending at preparation.
+
+## External publication follow-through
 
 1. The public source repository exists at https://github.com/myworkingmemory/n8n-nodes-curated-finds. Its initial commit passed GitHub CI: https://github.com/myworkingmemory/n8n-nodes-curated-finds/actions/runs/40778848901. Push each reviewed release change and verify CI before tagging.
-2. Bootstrap the unpublished `n8n-nodes-curated-finds` package using separately authorized short-lived npm access stored only in the repository Actions secret `NPM_TOKEN`, then revoke it after verified publication and remove the secret. npm trusted publishing requires an existing package; configure it near the next legitimate release using owner `myworkingmemory`, repository `n8n-nodes-curated-finds`, workflow `publish.yml` and the intended direct-publish permission. The package remained unclaimed on October 29 before release; do not claim npm publication until registry verification succeeds.
+2. Complete the documentation-only 0.1.1 release using the authorized publication flow, then revoke temporary npm access and remove the repository Actions secret after verified publication. npm trusted publishing requires an existing package; configure it near the next legitimate release using owner `myworkingmemory`, repository `n8n-nodes-curated-finds`, workflow `publish.yml` and the intended direct-publish permission.
 3. Publish only via the tag-triggered GitHub Action. Since May 1, 2026, n8n verification requires GitHub Actions npm provenance and a reachable public source repository. Do not claim provenance before that action has produced an attestation. Do not push a release tag until npm access is ready.
-4. Run `npx @n8n/scan-community-package@0.41.1 n8n-nodes-curated-finds@0.1.0` on the published package, checking its printed verdict as well as process status. The CLI can print a failed verdict yet exit zero. The earlier `--help` attempt was interpreted as a registry package name and returned 404, so it was not a package scan.
+4. Run `npx @n8n/scan-community-package@0.41.1 n8n-nodes-curated-finds@0.1.1` on the published package, checking its printed verdict as well as process status. The CLI can print a failed verdict yet exit zero. The earlier `--help` attempt was interpreted as a registry package name and returned 404, so it was not a package scan.
 5. Submit the package at the n8n Creator Portal Nodes section. Publication is not verification; n8n makes the final approval decision. The service supplies one clearly scoped action and public docs, with no runtime dependencies beyond the allowed n8n peer.
 
 ## Sources
