@@ -1,4 +1,4 @@
-# n8n-nodes-curated-finds
+# Myworkingmemory Curated Finds for n8n
 
 Search [Curated Finds](https://www.myworkingmemory.ai/curated-finds-docs.html), Myworkingmemory's source-reviewed catalogue of software and models, from an n8n workflow or AI agent. Results include source links, setup requirements, license declarations, evidence limits and original review dates.
 
@@ -8,13 +8,15 @@ This package integrates the existing **Curated Finds Direct API**. An Apify, MCP
 
 This source package is prepared for publication; it is not yet published on npm or verified by n8n. Once published, self-hosted users can install `n8n-nodes-curated-finds` under **Settings → Community Nodes**, following [n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation/). n8n Cloud installation requires separate n8n verification. Do not treat a public GitHub repository or npm package as evidence of Cloud availability.
 
-For local development, see [Development](#development).
+After installation, search the node picker for **Myworkingmemory**, **My Working Memory**, **Curated Finds** or **software search**, then select **Myworkingmemory Curated Finds**. The npm package name remains `n8n-nodes-curated-finds`.
+
+For local development, see [Compatibility and development](#compatibility-and-development).
 
 ## Credentials and lookup use
 
 1. Open [Myworkingmemory APIs](https://www.myworkingmemory.ai/apis), subscribe to Curated Finds Direct, or sign in to an existing subscription.
-2. Select **Show API key**, then copy your `cf_…` key into an n8n **Curated Finds API** credential. n8n encrypts credentials at rest; never put this key in a workflow parameter or example JSON.
-3. Select that credential on the Curated Finds node.
+2. Select **Show API key**, then copy your `cf_…` key into an n8n **Myworkingmemory Curated Finds API** credential. n8n encrypts credentials at rest; never put this key in a workflow parameter or example JSON.
+3. Select that credential on the Myworkingmemory Curated Finds node.
 
 **Saving or testing this credential in n8n can run a real search and uses one included lookup per test.** The test is fixed to `query=n8n`, `limit=1`, `offset=0`; an empty result still uses one lookup. n8n shows this notice in the credential form. A successful test confirms actual authenticated access, not only key format. The node does not perform a separate startup search when a workflow runs.
 
@@ -49,11 +51,11 @@ The direct API currently provides search only. This node does not invent record-
 
 Import [`examples/search-software.json`](examples/search-software.json) after installing the package. It contains:
 
-**Manual Trigger → Curated Finds Search → Review page and remaining allowance**
+**Manual Trigger → Myworkingmemory Curated Finds → Review page and remaining allowance**
 
 The example has no credentials, saved data, active schedule or automatic retry. Add your own credential. Search uses `SpeechBrain`, page size 3 and offset 0; executing it uses one lookup, in addition to any credential test. The last node preserves the full response for inspection.
 
-For an AI agent, add Curated Finds as a tool, select your own credential, and set a small fixed page size. The node advertises `usableAsTool: true`; the agent's repeated tool calls are separate lookups, so configure the agent's iteration limits and approval behaviour for your workflow. This package never supplies the publisher's credentials.
+For an AI agent, add Myworkingmemory Curated Finds as a tool, select your own credential, and set a small fixed page size. The node advertises `usableAsTool: true`; the agent's repeated tool calls are separate lookups, so configure the agent's iteration limits and approval behaviour for your workflow. This package never supplies the publisher's credentials.
 
 ## Compatibility and development
 

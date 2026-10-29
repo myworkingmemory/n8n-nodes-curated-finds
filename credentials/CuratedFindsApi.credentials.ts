@@ -3,7 +3,7 @@ import type { IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INo
 export class CuratedFindsApi implements ICredentialType {
 	name = 'curatedFindsApi';
 
-	displayName = 'Curated Finds API';
+	displayName = 'Myworkingmemory Curated Finds API';
 
 	icon = { light: 'file:../nodes/CuratedFinds/curatedFinds.svg', dark: 'file:../nodes/CuratedFinds/curatedFinds.dark.svg' } as const;
 

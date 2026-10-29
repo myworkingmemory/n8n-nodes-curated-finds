@@ -1,5 +1,5 @@
 {
-  "name": "Find software with Curated Finds Direct",
+  "name": "Find software with Myworkingmemory Curated Finds Direct",
   "nodes": [
     {
       "id": "manual",
@@ -14,7 +14,7 @@
     },
     {
       "id": "search",
-      "name": "Curated Finds",
+      "name": "Myworkingmemory Curated Finds",
       "type": "n8n-nodes-curated-finds.curatedFinds",
       "typeVersion": 1,
       "position": [
@@ -61,7 +61,7 @@
         -300
       ],
       "parameters": {
-        "content": "## Curated Finds \u2014 one explicit search\nInstall n8n-nodes-curated-finds, create a Curated Finds API credential with your own direct subscription key from https://www.myworkingmemory.ai/apis, and select it on Search.\n\nSaving or testing the credential may use one lookup per test. Clicking Execute uses one additional lookup. Direct access is $5.99/month for 1,000 lookups, separate from n8n and marketplace subscriptions. The output preserves version, total, records, nextOffset and remaining. No automatic pagination or node-level retries. Source-reviewed records are not proof the listed tools were installed or run.",
+        "content": "## Myworkingmemory Curated Finds \u2014 one explicit search\nInstall n8n-nodes-curated-finds, create a Myworkingmemory Curated Finds API credential with your own direct subscription key from https://www.myworkingmemory.ai/apis, and select it on Myworkingmemory Curated Finds.\n\nSaving or testing the credential may use one lookup per test. Clicking Execute uses one additional lookup. Direct access is $5.99/month for 1,000 lookups, separate from n8n and marketplace subscriptions. The output preserves version, total, records, nextOffset and remaining. No automatic pagination or node-level retries. Source-reviewed records are not proof the listed tools were installed or run.",
         "height": 260,
         "width": 700
       }
@@ -72,14 +72,14 @@
       "main": [
         [
           {
-            "node": "Curated Finds",
+            "node": "Myworkingmemory Curated Finds",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Curated Finds": {
+    "Myworkingmemory Curated Finds": {
       "main": [
         [
           {

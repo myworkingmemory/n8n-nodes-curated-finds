@@ -2,6 +2,12 @@
   "node": "n8n-nodes-curated-finds.curatedFinds",
   "nodeVersion": "1.0",
   "codexVersion": "1.0",
+  "alias": [
+    "Myworkingmemory",
+    "My Working Memory",
+    "Curated Finds",
+    "software search"
+  ],
   "categories": [
     "Development"
   ],

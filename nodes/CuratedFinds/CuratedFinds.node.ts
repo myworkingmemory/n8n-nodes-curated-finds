@@ -3,14 +3,14 @@ import { validateSearchRequest, validateSearchResponse } from './transport';
 
 export class CuratedFinds implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Curated Finds',
+		displayName: 'Myworkingmemory Curated Finds',
 		name: 'curatedFinds',
 		icon: { light: 'file:curatedFinds.svg', dark: 'file:curatedFinds.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Search source-reviewed software and models from Myworkingmemory',
-		defaults: { name: 'Curated Finds' },
+		defaults: { name: 'Myworkingmemory Curated Finds' },
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],

@@ -10,9 +10,18 @@ Prepared October 28, 2026. This package is a native integration for the existing
 - `npm run scan:local` runs the official `@n8n/scan-community-package` 0.41.1 static analyzer on source and the exact local npm tarball. Both source and packed artifact passed. Its result is saved in the ignored `.validation/scan-local.json`. This is local static analysis; it does not check an npm provenance attestation or a public GitHub repository.
 - The npm allowlist contains compiled nodes/credentials, safe example JSON, README, LICENSE and this file. It excludes tests, local account data, `node_modules`, build-cache files and operator evidence.
 
-No live API search, credential test, direct subscription lookup, model-provider request or payment was made. No hosted editor import, browser credential form or full `RoutingNode.runNode` execution is claimed by these tests. No npm package, GitHub repository, tag or n8n verification application was created by this package task. An actual product run requires the customer's direct subscription key and uses their allowance.
+No live API search, credential test, direct subscription lookup, model-provider request or payment was made. No hosted editor import, browser credential form or full `RoutingNode.runNode` execution is claimed by these tests. The initial package-construction phase created no npm package, GitHub repository, tag or n8n verification application; subsequent source-publication status is recorded below. An actual product run requires the customer's direct subscription key and uses their allowance.
 
 The local shell was Node.js 22.14.0. Build/lint/tests run successfully there, but current release tooling requires a newer supported runtime. CI and publishing use Node.js 24; use current Node 24 LTS for a fresh development installation. Local installation used `npm install --ignore-scripts` because product runtime tests do not need optional native development dependencies; the clean GitHub CI run remains a separate acceptance check.
+
+## Branding validation — October 29, 2026
+
+The visible node and credential names now include Myworkingmemory, and the node codex includes company, product and software-search aliases. The example's node label and connection references were updated together; internal node/credential identifiers, package version 0.1.0 and API behaviour are unchanged.
+
+- `npm run check` passed: official CLI lint/build and all 13 existing offline tests. No new tests were added.
+- `npm run scan:local` passed for both source and the packed 0.1.0 artifact. This remains local static analysis, without registry provenance or public-repository verification.
+- A read-only reference check confirmed that every connection in the renamed example resolves to an existing node; `git diff --check` passed.
+- No live API request, credential test, browser execution, paid lookup, commit, push or publication was performed for this change.
 
 ## Runtime boundaries found during review
 
@@ -24,8 +33,8 @@ Every workflow input item and every later AI-tool invocation can use another loo
 
 ## External publication steps
 
-1. Create the public `myworkingmemory/n8n-nodes-curated-finds` source repository; keep npm repository/author ownership consistent. Push the prepared source and obtain passing GitHub CI.
-2. Establish npm publication access for `n8n-nodes-curated-finds` and configure its GitHub Actions trusted publisher (`myworkingmemory`, `n8n-nodes-curated-finds`, `publish.yml`) or an appropriately scoped `NPM_TOKEN`. The npm package name was reported unclaimed at preparation time; availability and account authorization must be checked when publishing.
+1. The public source repository exists at https://github.com/myworkingmemory/n8n-nodes-curated-finds. Its initial commit passed GitHub CI: https://github.com/myworkingmemory/n8n-nodes-curated-finds/actions/runs/40778848901. Push each reviewed release change and verify CI before tagging.
+2. Bootstrap the unpublished `n8n-nodes-curated-finds` package using separately authorized short-lived npm access stored only in the repository Actions secret `NPM_TOKEN`, then revoke it after verified publication and remove the secret. npm trusted publishing requires an existing package; configure it near the next legitimate release using owner `myworkingmemory`, repository `n8n-nodes-curated-finds`, workflow `publish.yml` and the intended direct-publish permission. The package remained unclaimed on October 29 before release; do not claim npm publication until registry verification succeeds.
 3. Publish only via the tag-triggered GitHub Action. Since May 1, 2026, n8n verification requires GitHub Actions npm provenance and a reachable public source repository. Do not claim provenance before that action has produced an attestation. Do not push a release tag until npm access is ready.
 4. Run `npx @n8n/scan-community-package@0.41.1 n8n-nodes-curated-finds@0.1.0` on the published package, checking its printed verdict as well as process status. The CLI can print a failed verdict yet exit zero. The earlier `--help` attempt was interpreted as a registry package name and returned 404, so it was not a package scan.
 5. Submit the package at the n8n Creator Portal Nodes section. Publication is not verification; n8n makes the final approval decision. The service supplies one clearly scoped action and public docs, with no runtime dependencies beyond the allowed n8n peer.

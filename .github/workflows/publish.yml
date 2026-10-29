@@ -15,42 +15,22 @@
 #
 # To upgrade, add @n8n/node-cli@latest as a dev dependency using your package manager.
 #
-# ─── ONE-TIME SETUP ────────────────────────────────────────────────────────────
+# First release: a package must exist before npm trusted publishing can be set
+# up. Use a separately authorized, short-lived granular bootstrap token stored
+# only in this repository's NPM_TOKEN Actions secret; revoke it after verifying
+# publication and remove the secret. For a new unscoped package, npm may require
+# access to all current/future packages rather than the not-yet-created package.
 #
-# Option A — OIDC Trusted Publishing (recommended, no long-lived secrets):
-#   1. Log in to npmjs.com and open your package's settings.
-#   2. Under "Publish access" → "Trusted Publishers", click "Add a publisher".
-#   3. Select GitHub Actions and fill in:
-#        Repository owner: <your-github-username-or-org>
-#        Repository name:  <your-repo-name>
-#        Workflow name:    publish.yml
-#        Environment:      (leave blank unless you use GitHub Environments)
-#   4. Leave the NPM_TOKEN secret unset in this repository. GitHub's OIDC
-#      token is used instead — no secret ever touches your repo settings.
+# Later releases: configure npm trusted publishing for owner myworkingmemory,
+# repository n8n-nodes-curated-finds, workflow publish.yml shortly before the
+# next legitimate release. Explicitly grant direct publication if intended;
+# current npm defaults may allow staging only. Leave NPM_TOKEN unset for OIDC.
 #
-# Option B — npm Automation Token (fallback):
-#   1. On npmjs.com: Access Tokens → Generate New Token → Granular Access Token.
-#      Scope it to this package with "Read and write" publish permission.
-#   2. In GitHub: Settings → Secrets and variables → Actions → New secret.
-#      Name it NPM_TOKEN and paste the token value.
-#
-# Both options work with --provenance. Provenance is signed by GitHub's OIDC
-# infrastructure regardless of how npm authentication is handled.
-#
-# ─── TAG CONVENTION ────────────────────────────────────────────────────────────
-#
-# This workflow triggers on tags matching "*.*.*" (e.g. 0.2.0).
-# If you prefer tags with a "v" prefix (e.g. v0.2.0), change the filter to:
-#   tags: ['v*.*.*']
-#
-# ─── RELEASE PROCESS ───────────────────────────────────────────────────────────
-#
-# Run the following command locally to start an interactive release:
-#
-#   npm run release
-#
-# This will lint, build, prompt for a version bump, update the changelog,
-# commit, tag, and push — which triggers this workflow to publish to npm.
+# Initial prepared version: commit/push the reviewed source, verify its CI, then
+# push tag 0.1.0 only after npm access is ready. In GitHub Actions the official
+# CLI publishes the existing package version with provenance, without bumping
+# it. Verify every release tag matches package.json; npm versions are immutable.
+# Local npm run release instead starts an interactive version-bump flow.
 
 name: Publish
 
